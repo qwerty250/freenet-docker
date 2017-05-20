@@ -22,6 +22,15 @@ USER freenet
 ADD release-managers.asc /release-managers.asc
 ADD ./run /freenet/run
 
-EXPOSE 8888 9481
+# install ssh server
+RUN apt-get install -y openssh-server
+RUN mkdir /var/run/sshd
+
+RUN echo 'root:root' |chpasswd
+
+RUN sed -ri 's/^PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
+
+EXPOSE 8888 9481 22
 VOLUME ["/freenet/data"]
 CMD ["/freenet/run"]

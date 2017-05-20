@@ -5,14 +5,6 @@ ENV USER_ID 1000
 ENV GROUP_ID 1000
 ENV BUILD 1470
 
-# install ssh server
-RUN apt-get install -y openssh-server
-RUN mkdir /var/run/sshd
-
-RUN echo 'root:root' |chpasswd
-
-RUN sed -ri 's/^PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config
-RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
 
 RUN addgroup --system --gid $GROUP_ID freenet && adduser --system --uid=$USER_ID --gid=$GROUP_ID --home /freenet --shell /bin/bash --gecos "Freenet" freenet
 
@@ -25,6 +17,15 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p data && chown -R freenet:freenet /freenet
+
+# install ssh server
+RUN apt-get install -y openssh-server
+RUN mkdir /var/run/sshd
+
+RUN echo 'root:root' |chpasswd
+
+RUN sed -ri 's/^PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
 
 USER freenet
 
